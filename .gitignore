@@ -1,0 +1,9 @@
+.env
+node_modules/
+.DS_Store
+dist/
+log/
+localStorage/localStorage.json
+assets/referendaImageFiles/[0-9]*.png
+assets/referendaSettings/[0-9]*.json
+assets/mosaic/*
