@@ -52,9 +52,6 @@ export class BlockListener {
             const block = rawBlock.block;
             const blockIndexer = getBlockIndexer(block);
             const events = await blockApi.query.system.events();
-            // if (blockNumber === 10021243) {
-            //     console.log("events", events)
-            // }
             await handleEvents(events, block.extrinsics, blockIndexer);
         } catch (e) {
             logger.error(`error fetching extrinsics or events at block ${blockNumber}: ${e}`);
@@ -65,7 +62,6 @@ export class BlockListener {
     private fetchMissingBlockEvents = async (latestBlockDb: number, to: number): Promise<void> => {
         try {
             for (let i = latestBlockDb + 1; i <= to; i++) {
-                console.log(i);
                 await this.fetchEventsAtBlock(i);
             }
         } catch (e) {
