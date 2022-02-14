@@ -1,6 +1,10 @@
 # Referendum Alert Telegram
 
-With this program all users will be alerted as soon as a new referendum is up for vote.
+With this bot all users will be alerted as soon as a new referendum is up for vote.
+
+It can also be added to groups and thus is a great accessory to driving up participance on Kusama.
+
+Add the bot (@referendumAlertKusamaBot) to your group and then type the command /newReferendumBroadcastOn or alternatively /newReferendumBroadcastOff (has to be done by admin).
 
 The idea behind this bot is to not loose existing voters and retain them for future referenda as well. Esepcially since
 voters now also receive NFTs (another of my projects) for voting, it should be in their interest to stay up to date on the
