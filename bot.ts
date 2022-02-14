@@ -37,9 +37,8 @@ export const start = async (): Promise<{ runnerHandle: RunnerHandle, tBot: Bot; 
 
   bot.command("newReferendumBroadcastOff", async (ctx) => {
     if (checkIsGroup(ctx)) {
-      await getGroupOrCreate(ctx);
+      const group = await getGroupOrCreate(ctx);
       const userCol = await getUserCollection();
-      const group = await userCol.findOne({ chatId: ctx.chat.id });
       if (group.broadcast) {
         await userCol.updateOne({ chatId: ctx.chat.id }, { $set: { broadcast: false } });
         const message = `Referendum alerts turned off\\.`;
