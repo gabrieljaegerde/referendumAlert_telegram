@@ -19,7 +19,7 @@ export const start = async (): Promise<{ runnerHandle: RunnerHandle, tBot: Bot; 
    */
 
   bot.command("newReferendumBroadcastOn", async (ctx) => {
-    if (checkIsGroup(ctx, true)) {
+    if (await checkIsGroup(ctx, true)) {
       const group = await getGroupOrCreate(ctx);
       const userCol = await getUserCollection();
       if (group.broadcast && !group.blocked) {
@@ -36,7 +36,7 @@ export const start = async (): Promise<{ runnerHandle: RunnerHandle, tBot: Bot; 
   })
 
   bot.command("newReferendumBroadcastOff", async (ctx) => {
-    if (checkIsGroup(ctx, true)) {
+    if (await checkIsGroup(ctx, true)) {
       const group = await getGroupOrCreate(ctx);
       const userCol = await getUserCollection();
       if (group.broadcast) {
