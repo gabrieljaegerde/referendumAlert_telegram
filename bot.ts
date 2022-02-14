@@ -1,6 +1,5 @@
 import { Bot, GrammyError, HttpError } from "grammy";
 import { params, getKeyboard } from "./config.js";
-import { apiThrottler } from "@grammyjs/transformer-throttler";
 import { run, RunnerHandle } from "@grammyjs/runner";
 import { getUserCollection } from "./src/mongo/index.js";
 

@@ -1,10 +1,6 @@
 {
   "dependencies": {
-    "@grammyjs/files": "^1.0.2",
-    "@grammyjs/router": "^1.1.1",
-    "@grammyjs/runner": "^1.0.2",
-    "@grammyjs/stateless-question": "^3.0.0",
-    "@grammyjs/transformer-throttler": "^1.0.1",
+    "@grammyjs/runner": "^1.0.3",
     "@polkadot/api": "^7.7.1",
     "@polkadot/keyring": "^8.0.5",
     "@polkadot/types": "^7.7.1",
@@ -12,7 +8,6 @@
     "@polkadot/util-crypto": "^8.0.5",
     "bignumber.js": "^9.0.1",
     "dotenv": "^10.0.0",
-    "grammy": "^1.7.0",
     "grammy-inline-menu": "^7.0.1",
     "lodash": "^4.17.21",
     "log4js": "^6.3.0",
