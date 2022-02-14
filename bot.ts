@@ -2,6 +2,7 @@ import { Bot, GrammyError, HttpError } from "grammy";
 import { params, getKeyboard } from "./config.js";
 import { run, RunnerHandle } from "@grammyjs/runner";
 import { getUserCollection } from "./src/mongo/index.js";
+import { checkIsGroup, getGroupOrCreate, send } from "./tools/utils.js";
 
 export const start = async (): Promise<{ runnerHandle: RunnerHandle, tBot: Bot; }> => {
 
@@ -16,6 +17,40 @@ export const start = async (): Promise<{ runnerHandle: RunnerHandle, tBot: Bot; 
   /*
    *   /start command handler
    */
+
+  bot.command("newReferendumBroadcastOn", async (ctx) => {
+    if (checkIsGroup(ctx)) {
+      const group = await getGroupOrCreate(ctx);
+      const userCol = await getUserCollection();
+      if (group.broadcast) {
+        const message = `Referendum alerts already on\\.`;
+        await send(group.chatId, message, "MarkdownV2");
+      }
+      else{
+        await userCol.updateOne({ chatId: ctx.chat.id }, { $set: { broadcast: true } });
+        const message = `Referendum alerts turned on\\.`;
+        await send(group.chatId, message, "MarkdownV2");
+      }
+
+    }
+  })
+
+  bot.command("newReferendumBroadcastOff", async (ctx) => {
+    if (checkIsGroup(ctx)) {
+      await getGroupOrCreate(ctx);
+      const userCol = await getUserCollection();
+      const group = await userCol.findOne({ chatId: ctx.chat.id });
+      if (group.broadcast) {
+        await userCol.updateOne({ chatId: ctx.chat.id }, { $set: { broadcast: false } });
+        const message = `Referendum alerts turned off\\.`;
+        await send(group.chatId, message, "MarkdownV2");
+      }
+      else if (!group.broadcast) {
+        const message = `Referendum alerts already turned off\\.`;
+        await send(group.chatId, message, "MarkdownV2")
+      }
+    }
+  })
 
   bot.command("start", async (ctx) => {
     if (ctx.chat.type == "private") {
@@ -83,7 +118,7 @@ export const start = async (): Promise<{ runnerHandle: RunnerHandle, tBot: Bot; 
    *   react bot on '✅ Turn off new referendum broadcasting' message
    */
 
-  bot.hears("✅ Turn off referendum broadcasting", async (ctx) => {
+  bot.hears("✅ Turn off new referendum broadcasting", async (ctx) => {
     if (ctx.chat.type == "private") {
       const userCol = await getUserCollection();
 

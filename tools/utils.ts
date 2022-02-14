@@ -6,61 +6,61 @@ import { hexToU8a, u8aToHex } from "@polkadot/util";
 import { Modules, MultisigMethods, ProxyMethods, UtilityMethods } from "./constants.js";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { BN } from '@polkadot/util';
-import { InlineKeyboard } from "grammy";
+import { Context, InlineKeyboard } from "grammy";
 import { getUserCollection } from "../src/mongo/index.js";
 
 export const getApi = async (): Promise<ApiPromise> => {
-    const wsNodeUri = process.env.WS_NODE_URI || "ws://127.0.0.1:9944/";
-    const wsProvider = new WsProvider(wsNodeUri);
-    const api = await ApiPromise.create({ provider: wsProvider });
-    return api;
+  const wsNodeUri = process.env.WS_NODE_URI || "ws://127.0.0.1:9944/";
+  const wsProvider = new WsProvider(wsNodeUri);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  return api;
 };
 
 export const amountToHumanString = (amount: string, afterCommas?: number): string => {
-    const decimals = parseInt(params.settings.network.decimals);
-    const token = params.settings.network.token;
-    const value = new BN(amount.toString())
-        .div(new BN("1e" + decimals));
-    const tokenString = token ? " " + token : "";
-    return value + tokenString;
+  const decimals = parseInt(params.settings.network.decimals);
+  const token = params.settings.network.token;
+  const value = new BN(amount.toString())
+    .div(new BN("1e" + decimals));
+  const tokenString = token ? " " + token : "";
+  return value + tokenString;
 };
 
 export const escapeMarkdown = (text) => {
-    var unescaped = text.replace(/\\(\*|_|`|~|\.|!|\[|\]|\(|\)|~|>|#|\+|-|=|\||\{|\}|\\)/g, '$1'); // unescape any "backslashed" character
-    var escaped = unescaped.replace(/(\*|_|`|~|\.|!|\[|\]|\(|\)|~|>|#|\+|-|=|\||\{|\}|\\)/g, '\\$1'); // escape *, _, `, ~, \
-    return escaped;
+  var unescaped = text.replace(/\\(\*|_|`|~|\.|!|\[|\]|\(|\)|~|>|#|\+|-|=|\||\{|\}|\\)/g, '$1'); // unescape any "backslashed" character
+  var escaped = unescaped.replace(/(\*|_|`|~|\.|!|\[|\]|\(|\)|~|>|#|\+|-|=|\||\{|\}|\\)/g, '\\$1'); // escape *, _, `, ~, \
+  return escaped;
 };
 
 export const send = async (id: number, message: string, parseMode: string, inlineKeyboard?: InlineKeyboard): Promise<void> => {
-    try {
-        if (inlineKeyboard)
-            if (parseMode === "MarkdownV2") {
-                await params.bot.api.sendMessage(id, message, { reply_markup: inlineKeyboard, parse_mode: "MarkdownV2" });
-            }
-            else {
-                await params.bot.api.sendMessage(id, message, { reply_markup: inlineKeyboard, parse_mode: "Markdown" });
-            }
-        else
-            if (parseMode === "MarkdownV2") {
-                await params.bot.api.sendMessage(id, message, { parse_mode: "MarkdownV2" });
-            }
-            else {
-                await params.bot.api.sendMessage(id, message, { parse_mode: "Markdown" });
-            }
-    }
-    catch (error) {
-        if (error.message.includes("bot was blocked by the user")) {
-            const userCol = await getUserCollection();
-            await userCol.findOneAndUpdate({ chatId: id },
-                {
-                    $set: { blocked: true }
-                }
-            );
-            console.log(new Date(), `Bot was blocked by user with chatid ${id}`);
-            return;
+  try {
+    if (inlineKeyboard)
+      if (parseMode === "MarkdownV2") {
+        await params.bot.api.sendMessage(id, message, { reply_markup: inlineKeyboard, parse_mode: "MarkdownV2" });
+      }
+      else {
+        await params.bot.api.sendMessage(id, message, { reply_markup: inlineKeyboard, parse_mode: "Markdown" });
+      }
+    else
+      if (parseMode === "MarkdownV2") {
+        await params.bot.api.sendMessage(id, message, { parse_mode: "MarkdownV2" });
+      }
+      else {
+        await params.bot.api.sendMessage(id, message, { parse_mode: "Markdown" });
+      }
+  }
+  catch (error) {
+    if (error.message.includes("bot was blocked by the user")) {
+      const userCol = await getUserCollection();
+      await userCol.findOneAndUpdate({ chatId: id },
+        {
+          $set: { blocked: true }
         }
-        console.log(new Date(), error);
+      );
+      console.log(new Date(), `Bot was blocked by user with chatid ${id}`);
+      return;
     }
+    console.log(new Date(), error);
+  }
 };
 
 export const asyncFilter = async (arr, predicate) => {
@@ -245,4 +245,31 @@ export const isExtrinsicSuccess = (events) => {
   return events.some((e) => e.event.method === "ExtrinsicSuccess");
 }
 
+export const checkIsGroup = async (ctx: Context, checkAdmin = false): Promise<boolean> => {
+  if (ctx.chat.type == "group" || ctx.chat.type == "supergroup") {
+    if (checkAdmin) {
+      const admins = await params.bot.api.getChatAdministrators(ctx.chat.id);
+      const from = ctx.from;
+      if (admins.find(a => a.user.id == from.id)) {
+        return true;
+      } else return false;
+    } else return true;
+  } else return false;
+};
 
+export const getGroupOrCreate = async (ctx: Context) => {
+  const userCol = await getUserCollection();
+  const group = await userCol.findOne({ chatId: ctx.chat.id});
+  if (!group) {
+    await userCol.insertOne({
+      firstName: null,
+      username: null,
+      chatId: ctx.chat.id,
+      type: ctx.chat.type,
+      blocked: false,
+      broadcast: true,
+      createdAt: new Date()
+    });
+  }
+  return group
+};
