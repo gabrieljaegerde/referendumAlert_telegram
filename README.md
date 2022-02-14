@@ -6,7 +6,7 @@ It can also be added to groups and thus is a great accessory to driving up parti
 
 Add the bot (@referendumAlertKusamaBot) to your group and then type the command /newReferendumBroadcastOn or alternatively /newReferendumBroadcastOff (has to be done by admin).
 
-The idea behind this bot is to not loose existing voters and retain them for future referenda as well. Esepcially since
+The idea behind this bot is to not loose existing voters and retain them for future referenda as well. Secondly, since the bot can easily be added to existing community groups it should drive participance from newcommers. Esepcially since
 voters now also receive NFTs (another of my projects) for voting, it should be in their interest to stay up to date on the
 current referenda and this bot can help them with that.
 

@@ -49,7 +49,10 @@ export const send = async (id: number, message: string, parseMode: string, inlin
       }
   }
   catch (error) {
-    if (error.message.includes("bot was blocked by the user")) {
+    const conditions = ["bot was blocked by the user",
+      "bot was kicked from the supergroup chat",
+      "bot was kicked from the group chat"];
+    if (conditions.some(el => error.message.includes(el))) {
       const userCol = await getUserCollection();
       await userCol.findOneAndUpdate({ chatId: id },
         {
@@ -259,7 +262,7 @@ export const checkIsGroup = async (ctx: Context, checkAdmin = false): Promise<bo
 
 export const getGroupOrCreate = async (ctx: Context) => {
   const userCol = await getUserCollection();
-  const group = await userCol.findOne({ chatId: ctx.chat.id});
+  const group = await userCol.findOne({ chatId: ctx.chat.id });
   if (!group) {
     await userCol.insertOne({
       firstName: null,
