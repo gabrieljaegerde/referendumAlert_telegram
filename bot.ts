@@ -19,11 +19,11 @@ export const start = async (): Promise<{ runnerHandle: RunnerHandle, tBot: Bot; 
    */
 
   bot.command("newReferendumBroadcastOn", async (ctx) => {
-    if (checkIsGroup(ctx)) {
+    if (checkIsGroup(ctx, true)) {
       const group = await getGroupOrCreate(ctx);
       const userCol = await getUserCollection();
       if (group.broadcast && !group.blocked) {
-        const message = `Referendum alerts already on\\.`;
+        const message = `Referendum alerts turned on\\.`;
         await send(group.chatId, message, "MarkdownV2");
       }
       else{
@@ -36,7 +36,7 @@ export const start = async (): Promise<{ runnerHandle: RunnerHandle, tBot: Bot; 
   })
 
   bot.command("newReferendumBroadcastOff", async (ctx) => {
-    if (checkIsGroup(ctx)) {
+    if (checkIsGroup(ctx, true)) {
       const group = await getGroupOrCreate(ctx);
       const userCol = await getUserCollection();
       if (group.broadcast) {
