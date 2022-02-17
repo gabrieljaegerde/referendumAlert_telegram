@@ -262,7 +262,7 @@ export const checkIsGroup = async (ctx: Context, checkAdmin = false): Promise<bo
 
 export const getGroupOrCreate = async (ctx: Context) => {
   const userCol = await getUserCollection();
-  const group = await userCol.findOne({ chatId: ctx.chat.id });
+  let group = await userCol.findOne({ chatId: ctx.chat.id });
   if (!group) {
     await userCol.insertOne({
       firstName: null,
@@ -273,6 +273,7 @@ export const getGroupOrCreate = async (ctx: Context) => {
       broadcast: true,
       createdAt: new Date()
     });
+    group = await userCol.findOne({ chatId: ctx.chat.id });
   }
   return group
 };

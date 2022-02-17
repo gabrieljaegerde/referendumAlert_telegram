@@ -15,7 +15,9 @@ const sendNewMessages = async (referendumId) => {
   for (const user of users) {
     if (user && !user.blocked && user.broadcast) {
       const message = `A new referendum with ID ${referendumId} is up for vote\\.\n\n` + 
-      `Go vote on polkadot\\.js at your earliest convenience to secure your NFT\\.\n\nYes, voters get NFTs\\!`;
+      `Go vote on polkadot\\.js at your earliest convenience to secure your NFT\\.\n\nYes, voters get NFTs\\!\n\n` +
+      `*Want me to send alerts in ${ user.type === "private" ? "a" : "another"} group${ user.type === "private" ? "" : " too"}\\?*\n` +
+      `_Add me to that group as a member\\, then ask an admin to run\\: /newReferendumBroadcastOn_`;
       await send(user.chatId, message, "MarkdownV2", inlineKeyboard);
     }
   }
